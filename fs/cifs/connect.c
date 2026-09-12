@@ -170,9 +170,9 @@ static void cifs_resolve_server(struct work_struct *work)
  * Mark one transport, or every transport under the same SMB session family,
  * so that the owning cifsd thread performs the reconnect.
  *
- * This vendor tree predates the upstream per-server srv_lock and explicit
- * channel parent linkage. R3.3-B supplies primary_server and continues to use
- * cifs_tcp_ses_lock for tcpStatus transitions.
+ * This 5.15 tree predates the upstream per-server srv_lock and explicit
+ * channel parent linkage. Use primary_server and cifs_tcp_ses_lock for the
+ * equivalent tcpStatus transitions.
  */
 void
 cifs_signal_cifsd_for_reconnect(struct TCP_Server_Info *server,
@@ -555,7 +555,7 @@ static int reconnect_dfs_server(struct TCP_Server_Info *server,
 int cifs_reconnect(struct TCP_Server_Info *server)
 {
 	/*
-	 * Preserve the vendor one-argument ABI for callers outside this source
+	 * Keep the one-argument ABI for callers outside this source
 	 * file, but keep socket teardown owned by cifsd. Unknown legacy callers
 	 * are conservative and invalidate the whole SMB session.
 	 */
@@ -586,7 +586,7 @@ int cifs_reconnect(struct TCP_Server_Info *server)
 int cifs_reconnect(struct TCP_Server_Info *server)
 {
 	/*
-	 * Preserve the vendor one-argument ABI while ensuring that non-cifsd
+	 * Keep the one-argument ABI while ensuring that non-cifsd
 	 * callers only signal. Their legacy semantics are conservatively treated
 	 * as session-wide reconnect requests.
 	 */
@@ -3768,7 +3768,7 @@ int cifs_mount(struct cifs_sb_info *cifs_sb, struct smb3_fs_context *ctx)
 
 	/*
 	 * SMB3 multichannel is independent of DFS. Keep the non-DFS mount
-	 * path equivalent to the DFS path for this controlled experiment.
+	 * path equivalent to the DFS path.
 	 */
 	cifs_try_adding_channels(cifs_sb, mnt_ctx.ses);
 	rc = mount_setup_tlink(cifs_sb, mnt_ctx.ses, mnt_ctx.tcon);
