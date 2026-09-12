@@ -434,7 +434,7 @@ smbd_done:
 	/*
 	 * Upper CIFS layers need one replayable transport error, not a family
 	 * of socket errno values. Preserve signal/interruption returns from this
-	 * older vendor tree, and ask the owning cifsd to recover this channel.
+	 * 5.15 tree, and ask the owning cifsd to recover this channel.
 	 */
 	if (rc < 0 && rc != -EINTR && rc != -EAGAIN &&
 	    rc != -ERESTARTSYS) {
@@ -1074,12 +1074,12 @@ struct TCP_Server_Info *cifs_pick_channel(struct cifs_ses *ses)
 		    CIFS_CHAN_IN_RECONNECT(ses, cur))
 			continue;
 
-		/* Preserve the R3.2 transport-state fence as a second guard. */
+		/* Keep the transport-state fence as a second guard. */
 		if (server->tcpStatus == CifsNeedReconnect)
 			continue;
 
 		/*
-		 * Preserve the validated R3.1 rotated least-loaded policy. If no
+		 * Keep the rotated least-loaded policy. If no
 		 * eligible channel exists, index remains zero and we deliberately
 		 * fall back to the primary transport so normal reconnect handling
 		 * can wait/recover instead of failing channel selection outright.

@@ -1008,9 +1008,9 @@ struct cifs_ses {
 	/*
 	 * Bitmap of channels that require connection/session recovery.
 	 *
-	 * R3.3 keeps the vendor need_reconnect/binding fields during the
-	 * staged backport. Later blocks move reconnect decisions to this
-	 * per-channel state without changing the validated R3.2 selector.
+	 * Track reconnect state per channel while another established transport
+	 * can keep the SMB session usable. The bitmap is protected by chan_lock.
+	 * Keep channel eligibility separate from the session-wide state.
 	 */
 	unsigned long chans_need_reconnect;
 	/* ========= end: protected by chan_lock ======== */

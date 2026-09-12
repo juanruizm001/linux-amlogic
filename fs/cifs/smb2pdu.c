@@ -4040,8 +4040,8 @@ flush_exit:
 	SMB2_flush_free(&rqst);
 	free_rsp_buf(resp_buftype, rsp_iov.iov_base);
 
-	/* Soft-mount failover is bounded. Three replays also matches the
-	 * bounded replay behaviour used by Windows SMB clients for WRITE. */
+	/* Keep soft-mount failover bounded to three replay attempts.
+	 * Re-evaluate the channel before each replay. */
 	if (is_replayable_error(rc) && retries < max_replays) {
 		retries++;
 		goto replay_again;
